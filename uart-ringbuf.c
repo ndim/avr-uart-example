@@ -55,53 +55,53 @@ ISR(USART0_RX_vect)
  */
 ISR(USART0_RX_vect, ISR_NAKED)                 /* CLOCK CYCLES */
 {
-  asm("\n\t"                                   /* 5 ISR entry */
-      "push  r24\n\t"                          /* 2 */
-      "push  r25\n\t"                          /* 2 */
-      "push  r30\n\t"                          /* 2 */
-      "push  r31\n\t"                          /* 2 */
-      "in    %r[sreg_save], __SREG__\n\t"      /* 1 */
-      "\n\t"
+  asm volatile("\n\t"                                   /* 5 ISR entry */
+	       "push  r24\n\t"                          /* 2 */
+	       "push  r25\n\t"                          /* 2 */
+	       "push  r30\n\t"                          /* 2 */
+	       "push  r31\n\t"                          /* 2 */
+	       "in    %r[sreg_save], __SREG__\n\t"      /* 1 */
+	       "\n\t"
 
-      /* read byte from UART */
-      "lds   r25, %M[uart_data]\n\t"           /* 2 */
+	       /* read byte from UART */
+	       "lds   r25, %M[uart_data]\n\t"           /* 2 */
 
-      /* next_tail := (cur_tail + 1) & MASK; */
-      "ldi   r24, 1\n\t"                       /* 1 */
-      "add   r24, %r[tail]\n\t"                /* 1 */
-      "andi  r24, %a[mask]\n\t"                /* 1 */
+	       /* next_tail := (cur_tail + 1) & MASK; */
+	       "ldi   r24, 1\n\t"                       /* 1 */
+	       "add   r24, %r[tail]\n\t"                /* 1 */
+	       "andi  r24, %a[mask]\n\t"                /* 1 */
 
-      /* if next_tail == cur_head */
-      "cp    r24, %r[head]\n\t"                /* 1 */
-      "breq  L_%=\n\t"                         /* 1/2 */
+	       /* if next_tail == cur_head */
+	       "cp    r24, %r[head]\n\t"                /* 1 */
+	       "breq  L_%=\n\t"                         /* 1/2 */
 
-      /* rb_buf[next_tail] := byte */
-      "mov   r30, r24\n\t"                     /* 1 */
-      "ldi   r31, 0\n\t"                       /* 1 */
-      "subi  r30, lo8(-(rb_buf))\n\t"          /* 1 */
-      "sbci  r31, hi8(-(rb_buf))\n\t"          /* 1 */
-      "st    Z, r25\n\t"                       /* 2 */
+	       /* rb_buf[next_tail] := byte */
+	       "mov   r30, r24\n\t"                     /* 1 */
+	       "ldi   r31, 0\n\t"                       /* 1 */
+	       "subi  r30, lo8(-(rb_buf))\n\t"          /* 1 */
+	       "sbci  r31, hi8(-(rb_buf))\n\t"          /* 1 */
+	       "st    Z, r25\n\t"                       /* 2 */
 
-      /* rb_tail := next_tail */
-      "mov   %r[tail], r24\n\t"                /* 1 */
+	       /* rb_tail := next_tail */
+	       "mov   %r[tail], r24\n\t"                /* 1 */
 
-      "\n"
-"L_%=:\t"
-      "out   __SREG__, %r[sreg_save]\n\t"      /* 1 */
-      "pop   r31\n\t"                          /* 2 */
-      "pop   r30\n\t"                          /* 2 */
-      "pop   r25\n\t"                          /* 2 */
-      "pop   r24\n\t"                          /* 2 */
-      "reti\n\t"                               /* 5 ISR return */
-      : /* output operands */
-        [tail]      "+r"   (rb_tail)    /* both input+output */
-      : /* input operands */
-        [uart_data] "M"    (_SFR_MEM_ADDR(UDR0)),
-        [mask]      "M"    (RB_MASK),
-        [head]      "r"    (rb_head),
-        [sreg_save] "r"    (rb_sreg_save)
-        /* no clobbers */
-      );
+	       "\n"
+    "L_%=:\t"
+	       "out   __SREG__, %r[sreg_save]\n\t"      /* 1 */
+	       "pop   r31\n\t"                          /* 2 */
+	       "pop   r30\n\t"                          /* 2 */
+	       "pop   r25\n\t"                          /* 2 */
+	       "pop   r24\n\t"                          /* 2 */
+	       "reti\n\t"                               /* 5 ISR return */
+	       : /* output operands */
+		 [tail]      "+r"   (rb_tail)    /* both input+output */
+	       : /* input operands */
+		 [uart_data] "M"    (_SFR_MEM_ADDR(UDR0)),
+		 [mask]      "M"    (RB_MASK),
+		 [head]      "r"    (rb_head),
+		 [sreg_save] "r"    (rb_sreg_save)
+		 /* no clobbers */
+	       );
 }
 
 #endif
