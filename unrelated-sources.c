@@ -1,9 +1,15 @@
-#include "uart-ringbuf-global.h"
-
-/* This code is using lots of registers and is including
- * <uart-ringbuf-global.h> because we want to see which registers are
- * used by the generated code.
+/* This code is using lots of registers but not including
+ * <uart-ringbuf-global.h> because we want to check whether the code
+ * generated for unrelated_event_loop() uses any of the global
+ * registers from the ringbuffer implementation.
+ *
+ * DO NOT include <uart-ringbuf-global.h> in this file, as in this
+ * file, we want to check whether the compiler command line options
+ * reserve the appropriate registers for use by
+ * <uart-ringbuf-global.h>.
  */
+
+#include <stdint.h>
 
 
 /* The blubb_in and blubb_out variables are just to convince the
@@ -15,11 +21,9 @@ static volatile uint8_t blubb_in;
 static volatile uint8_t blubb_out;
 
 
-inline static
-void main_event_loop(void)
+void unrelated_event_loop(void)
   __attribute__ ((noreturn));
-inline static
-void main_event_loop(void)
+void unrelated_event_loop(void)
 {
   /* enough variables to exhaused the 32 registers on the AVR */
   uint8_t a=1, b=2, c=1, d=7, e=9, f=1, g=2, h=1;
@@ -66,9 +70,3 @@ void main_event_loop(void)
     blubb_out = x;
   }
 }
-
-
-int main(void)
-{
-  main_event_loop();
-} /* int main(void) */

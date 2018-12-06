@@ -247,6 +247,14 @@ ALL: all
 # Define the common object files.
 # The object files specific to firmware personalities will not be listed here.
 FIRMWARE_OBJ += .objs/main.o
+FIRMWARE_OBJ += .objs/unrelated-sources.o
+
+# IMPORTANT:
+# All the registers mentioned here MUST be the same set as in the
+# uart-ringbuf-global.h register variable definitions.
+CFLAGS += -ffixed-r13
+CFLAGS += -ffixed-r14
+CFLAGS += -ffixed-r15
 FIRMWARE_OBJ += .objs/uart-ringbuf.o
 
 

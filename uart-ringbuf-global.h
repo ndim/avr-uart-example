@@ -9,6 +9,10 @@
 
 extern volatile uint8_t rb_buf[RB_SIZE];
 
+/* IMPORTANT:
+ * All the registers mentioned here explicitly MUST be the same ones
+ * in the -ffixed-rNN arguments in the global CFLAGS in GNUmakefile!
+ */
 register uint8_t rb_head asm("r13");
 register uint8_t rb_tail asm("r14");
 
