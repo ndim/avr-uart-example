@@ -186,7 +186,6 @@ LDFLAGS += -Wl,-Map=$(@:.elf=.map),--cref
 
 AWK = gawk
 SED = sed
-ERL = erl
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
