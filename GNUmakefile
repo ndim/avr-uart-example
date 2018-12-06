@@ -87,6 +87,10 @@ CFLAGS += -std=gnu99
 
 
 CPPFLAGS += -Wall -Wextra
+# The file scope definition of register variables used in uart-ringbuf-global.h
+# does not allow for -pedantic
+# CPPFLAGS += -pedantic
+CFLAGS += -Werror
 CFLAGS += -Wstrict-prototypes
 # Some more flags that might be useful for tuning:
 # CFLAGS += -funsigned-char
